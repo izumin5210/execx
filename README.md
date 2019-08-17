@@ -2,7 +2,7 @@
 [![GoDoc](https://godoc.org/github.com/izumin5210/execx?status.svg)](https://godoc.org/github.com/izumin5210/execx)
 [![License](https://img.shields.io/github/license/izumin5210/execx.svg)](./LICENSE)
 
-Wrapper of `os/exec` to stop commands correctly.
+Make `os/exec` testable and graceful
 
 ```go
 ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -20,4 +20,5 @@ fmt.Println(out, err, st.Signaled, st.Killed)
 
 ## Reference
 
-- https://github.com/Songmu/timeout
+- [github.com/Songmu/timeout](https://godoc.org/github.com/Songmu/timeout)
+- [k8s.io/utils/exec](https://godoc.org/k8s.io/utils/exec)
