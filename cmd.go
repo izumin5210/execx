@@ -79,7 +79,7 @@ func (c *Cmd) Wait() error {
 				select {
 				case <-done:
 					return
-				case <-time.After(c.TerminateTimeout):
+				case <-time.After(c.GracePeriod):
 					killCh <- struct{}{}
 				}
 			}()

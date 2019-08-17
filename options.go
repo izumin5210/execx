@@ -9,13 +9,13 @@ type Option func(*Config)
 
 func defaultConfig() *Config {
 	return &Config{
-		TerminateTimeout:  30 * time.Second,
+		GracePeriod:       30 * time.Second,
 		CreateProcessFunc: newOSProcess,
 	}
 }
 
 type Config struct {
-	TerminateTimeout time.Duration
+	GracePeriod time.Duration
 
 	CreateProcessFunc CreateProcessFunc
 }
@@ -28,8 +28,8 @@ func (c *Config) apply(opts []Option) {
 
 type CreateProcessFunc func(*exec.Cmd) Process
 
-func WithTerminateTimeout(d time.Duration) Option {
-	return func(c *Config) { c.TerminateTimeout = d }
+func WithGracePeriod(d time.Duration) Option {
+	return func(c *Config) { c.GracePeriod = d }
 }
 
 func WithCreateProcessFunc(f CreateProcessFunc) Option {
