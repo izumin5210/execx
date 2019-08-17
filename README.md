@@ -1,6 +1,6 @@
-# exec
-[![GoDoc](https://godoc.org/github.com/izumin5210/exec?status.svg)](https://godoc.org/github.com/izumin5210/exec)
-[![License](https://img.shields.io/github/license/izumin5210/exec.svg)](./LICENSE)
+# execx
+[![GoDoc](https://godoc.org/github.com/izumin5210/execx?status.svg)](https://godoc.org/github.com/izumin5210/execx)
+[![License](https://img.shields.io/github/license/izumin5210/execx.svg)](./LICENSE)
 
 Wrapper of `os/exec` to stop commands correctly.
 
@@ -8,10 +8,10 @@ Wrapper of `os/exec` to stop commands correctly.
 ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 defer cancel()
 
-cmd := exec.CommandContext(ctx, "sh", "-c", "sleep 5; echo done")
+cmd := execx.CommandContext(ctx, "sh", "-c", "sleep 5; echo done")
 out, err := cmd.Output()
 
-st := err.(*exec.ExitStatus)
+st := err.(*execx.ExitStatus)
 
 fmt.Println(out, err, st.Signaled, st.Killed)
 

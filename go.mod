@@ -1,4 +1,4 @@
-module github.com/izumin5210/exec
+module github.com/izumin5210/execx
 
 go 1.12
 

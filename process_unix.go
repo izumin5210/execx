@@ -1,6 +1,6 @@
 // +build !windows
 
-package exec
+package execx
 
 import (
 	"os"
