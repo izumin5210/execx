@@ -1,6 +1,7 @@
 # execx
 [![GoDoc](https://godoc.org/github.com/izumin5210/execx?status.svg)](https://godoc.org/github.com/izumin5210/execx)
-[![License](https://img.shields.io/github/license/izumin5210/execx.svg)](./LICENSE)
+[![License](https://img.shields.io/github/license/izumin5210/execx)](./LICENSE)
+
 
 Make `os/exec` testable and graceful
 
