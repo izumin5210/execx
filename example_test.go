@@ -19,5 +19,5 @@ func ExampleCommandTimeout() {
 
 	fmt.Println(out, err, st.Signaled, st.Killed)
 
-	// Output: [] context deadline exceeded true false
+	// Output: [] signal: interrupt true false
 }

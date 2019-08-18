@@ -30,7 +30,7 @@ func (c *Cmd) Run() error {
 }
 
 func (c *Cmd) Start() error {
-	c.p = c.CreateProcessFunc(c.Cmd)
+	c.p = c.ProcessFactory.Create(c.Cmd)
 	if err := c.p.Start(); err != nil {
 		return &ExitStatus{
 			Code: wrapcommander.ResolveExitCode(err),
@@ -46,8 +46,6 @@ func (c *Cmd) Wait() error {
 	}
 
 	// https://github.com/Songmu/timeout/blob/v0.4.0/timeout.go#L132-L174
-	ex := &ExitStatus{}
-
 	killCh := make(chan struct{}, 2)
 
 	done := make(chan struct{})
@@ -57,23 +55,18 @@ func (c *Cmd) Wait() error {
 
 	for {
 		select {
-		case st := <-exitCh:
-			ex.Code = wrapcommander.WaitStatusToExitCode(st)
-			ex.Signaled = st.Signaled()
-
-			if ex.Code == wrapcommander.ExitNormal {
-				return nil
+		case ex := <-exitCh:
+			if ex != nil {
+				ex.Timeout = c.ctx.Err() == context.DeadlineExceeded
+				ex.Canceled = c.ctx.Err() == context.Canceled
 			}
-
 			return ex
 
 		case <-killCh:
 			c.p.Kill()
-			ex.Killed = true
 
 		case <-c.ctx.Done():
 			c.p.Terminate()
-			ex.Err = c.ctx.Err()
 
 			go func() {
 				select {

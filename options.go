@@ -9,16 +9,24 @@ type Option func(*Config)
 
 func defaultConfig() *Config {
 	return &Config{
-		GracePeriod:       30 * time.Second,
-		CreateProcessFunc: newOSProcess,
+		GracePeriod:    30 * time.Second,
+		ProcessFactory: ProcessFactoryFunc(newOSProcess),
 	}
 }
 
 type Config struct {
 	GracePeriod time.Duration
 
-	CreateProcessFunc CreateProcessFunc
+	ProcessFactory ProcessFactory
 }
+
+type ProcessFactory interface {
+	Create(*exec.Cmd) Process
+}
+
+type ProcessFactoryFunc func(*exec.Cmd) Process
+
+func (f ProcessFactoryFunc) Create(c *exec.Cmd) Process { return f(c) }
 
 func (c *Config) apply(opts []Option) {
 	for _, f := range opts {
@@ -26,12 +34,10 @@ func (c *Config) apply(opts []Option) {
 	}
 }
 
-type CreateProcessFunc func(*exec.Cmd) Process
-
 func WithGracePeriod(d time.Duration) Option {
 	return func(c *Config) { c.GracePeriod = d }
 }
 
-func WithCreateProcessFunc(f CreateProcessFunc) Option {
-	return func(c *Config) { c.CreateProcessFunc = f }
+func WithProcessFactory(f ProcessFactory) Option {
+	return func(c *Config) { c.ProcessFactory = f }
 }

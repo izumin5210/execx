@@ -7,6 +7,8 @@ type ExitStatus struct {
 	Code     int
 	Signaled bool
 	Killed   bool
+	Timeout  bool
+	Canceled bool
 	Err      error
 }
 
