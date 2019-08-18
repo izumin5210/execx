@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ '1.11', '1.12' ]
+        go: [ '1.12', '1.13beta1' ]
     name: test with go${{ matrix.go }}
     steps:
       - uses: actions/checkout@master
