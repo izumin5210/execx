@@ -55,12 +55,13 @@ func (c *Cmd) Wait() error {
 
 	for {
 		select {
-		case ex := <-exitCh:
-			if ex != nil {
+		case ex, ok := <-exitCh:
+			if ok {
 				ex.Timeout = c.ctx.Err() == context.DeadlineExceeded
 				ex.Canceled = c.ctx.Err() == context.Canceled
+				return ex
 			}
-			return ex
+			return nil
 
 		case <-killCh:
 			c.p.Kill()
