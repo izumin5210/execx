@@ -54,11 +54,13 @@ func (c *Cmd) Wait() error {
 
 	exitCh := c.p.Wait()
 	var killOnce, termOnce sync.Once
+	var killed bool
 
 	for {
 		select {
 		case ex, ok := <-exitCh:
 			if ok {
+				ex.Killed = killed
 				ex.Timeout = c.ctx.Err() == context.DeadlineExceeded
 				ex.Canceled = c.ctx.Err() == context.Canceled
 				return ex
@@ -67,7 +69,9 @@ func (c *Cmd) Wait() error {
 
 		case <-killCh:
 			killOnce.Do(func() {
-				c.p.Kill()
+				_ = c.p.Kill()
+				_ = c.Process.Kill()
+				killed = true
 			})
 
 		case <-c.ctx.Done():
