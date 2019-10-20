@@ -8,7 +8,7 @@ import (
 	"syscall"
 )
 
-func newOSProcess(cmd *exec.Cmd) Process {
+func NewOSProcess(cmd *exec.Cmd) Process {
 	// https://github.com/Songmu/timeout/blob/v0.4.0/timeout_unix.go#L14-L19
 	if cmd.SysProcAttr == nil {
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
