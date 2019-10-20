@@ -10,7 +10,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/izumin5210/execx"
 )
 
@@ -136,12 +135,12 @@ func TestCommand(t *testing.T) {
 				}
 			}
 
-			if diff := cmp.Diff(strings.TrimSpace(outW.String()), strings.Join(tc.wantStdout, "\n")); diff != "" {
-				t.Errorf("Stdout diff:\n%s", diff)
+			if got, want := strings.TrimSpace(outW.String()), strings.Join(tc.wantStdout, "\n"); got != want {
+				t.Errorf("Stdout was:\n%s\nwant:\n%s", got, want)
 			}
 
-			if diff := cmp.Diff(strings.TrimSpace(errW.String()), strings.Join(tc.wantStderr, "\n")); diff != "" {
-				t.Errorf("Stderr diff:\n%s", diff)
+			if got, want := strings.TrimSpace(errW.String()), strings.Join(tc.wantStderr, "\n"); got != want {
+				t.Errorf("Stderr was:\n%s\nwant:\n%s", got, want)
 			}
 		})
 	}
