@@ -16,11 +16,12 @@ import (
 
 var (
 	stubCmd = filepath.Join(".", "testdata", "echo", "bin", "echo")
+	isWin   = runtime.GOOS == "windows"
 )
 
 func init() {
 	// https://github.com/Songmu/timeout/blob/v0.4.0/timeout_test.go#L22-L32
-	if runtime.GOOS == "windows" {
+	if isWin {
 		stubCmd += ".exe"
 	}
 	err := exec.Command("go", "build", "-o", stubCmd, "./testdata/echo").Run()
@@ -36,6 +37,7 @@ func TestCommand(t *testing.T) {
 		wantStdout []string
 		wantStderr []string
 		wantStatus *execx.ExitStatus
+		skipOnWin  bool
 	}{
 		{
 			test:       "simple",
@@ -52,6 +54,7 @@ func TestCommand(t *testing.T) {
 			wantStdout: []string{},
 			wantStderr: []string{},
 			wantStatus: &execx.ExitStatus{Signaled: true, Timeout: true},
+			skipOnWin:  true,
 		},
 		{
 			test: "trap timeout",
@@ -61,6 +64,7 @@ func TestCommand(t *testing.T) {
 			},
 			wantStdout: []string{"It Works!"},
 			wantStderr: []string{"signal received"},
+			skipOnWin:  true,
 		},
 		{
 			test: "over grace period",
@@ -72,6 +76,7 @@ func TestCommand(t *testing.T) {
 			wantStdout: []string{""},
 			wantStderr: []string{"signal received"},
 			wantStatus: &execx.ExitStatus{Signaled: true, Killed: true, Timeout: true},
+			skipOnWin:  true,
 		},
 		{
 			test: "cancel",
@@ -98,6 +103,9 @@ func TestCommand(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.test, func(t *testing.T) {
+			if tc.skipOnWin && isWin {
+				t.Skip("skip on windows")
+			}
 			outW, errW := new(bytes.Buffer), new(bytes.Buffer)
 			cmd := tc.cmd()
 			cmd.Stdout = outW
