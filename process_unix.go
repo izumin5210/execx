@@ -35,9 +35,4 @@ func (p *process) Terminate() error {
 	return nil
 }
 
-func (p *process) Kill() error {
-	// https://github.com/Songmu/timeout/blob/v0.4.0/timeout_unix.go#L37-L39
-	return syscall.Kill(-p.cmd.Process.Pid, syscall.SIGKILL)
-}
-
 func (p *process) Signal() os.Signal { return syscall.SIGTERM }

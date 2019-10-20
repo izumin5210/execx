@@ -70,7 +70,6 @@ func (c *Cmd) Wait() error {
 		case <-killCh:
 			killOnce.Do(func() {
 				c.handleError(c.p.Kill())
-				c.handleError(c.Process.Kill())
 				killed = true
 			})
 

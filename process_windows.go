@@ -3,7 +3,6 @@ package execx
 import (
 	"os"
 	"os/exec"
-	"strconv"
 	"syscall"
 
 	"golang.org/x/sys/windows"
@@ -61,11 +60,6 @@ func (p *process) Terminate() error {
 		return err
 	}
 	return nil
-}
-
-func (p *process) Kill() error {
-	// https://github.com/Songmu/timeout/blob/v0.4.0/timeout_windows.go#L22-L24
-	return exec.Command("taskkill", "/F", "/T", "/PID", strconv.Itoa(p.cmd.Process.Pid)).Run()
 }
 
 func (p *process) Signal() os.Signal { return os.Interrupt }

@@ -41,3 +41,7 @@ func (p *process) Wait() <-chan *ExitStatus {
 	}()
 	return ch
 }
+
+func (p *process) Kill() error {
+	return p.cmd.Process.Kill()
+}
