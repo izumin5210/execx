@@ -39,15 +39,15 @@ func TestCommand(t *testing.T) {
 	}{
 		{
 			test:       "simple",
-			cmd:        func() *execx.Cmd { return execx.Command(stubCmd, "-sleep", "1s", "It Works!") },
+			cmd:        func() *execx.Cmd { return execx.Command(stubCmd, "-sleep", "3s", "It Works!") },
 			wantStdout: []string{"It Works!"},
 			wantStderr: []string{},
 		},
 		{
 			test: "timeout",
 			cmd: func() *execx.Cmd {
-				ctx, _ := context.WithTimeout(context.Background(), 50*time.Millisecond)
-				return execx.CommandContext(ctx, stubCmd, "-sleep", "1s", "It Works!")
+				ctx, _ := context.WithTimeout(context.Background(), 100*time.Millisecond)
+				return execx.CommandContext(ctx, stubCmd, "-sleep", "3s", "It Works!")
 			},
 			wantStdout: []string{},
 			wantStderr: []string{},
@@ -56,8 +56,8 @@ func TestCommand(t *testing.T) {
 		{
 			test: "trap timeout",
 			cmd: func() *execx.Cmd {
-				ctx, _ := context.WithTimeout(context.Background(), 50*time.Millisecond)
-				return execx.CommandContext(ctx, stubCmd, "-trap", "-sleep", "1s", "It Works!")
+				ctx, _ := context.WithTimeout(context.Background(), 100*time.Millisecond)
+				return execx.CommandContext(ctx, stubCmd, "-trap", "-sleep", "3s", "It Works!")
 			},
 			wantStdout: []string{"It Works!"},
 			wantStderr: []string{"signal received"},
@@ -65,9 +65,9 @@ func TestCommand(t *testing.T) {
 		{
 			test: "over grace period",
 			cmd: func() *execx.Cmd {
-				ctx, _ := context.WithTimeout(context.Background(), 50*time.Millisecond)
-				return execx.New(execx.WithGracePeriod(200*time.Millisecond)).
-					CommandContext(ctx, stubCmd, "-trap", "-sleep", "1s", "It Works!")
+				ctx, _ := context.WithTimeout(context.Background(), 100*time.Millisecond)
+				return execx.New(execx.WithGracePeriod(1500*time.Millisecond)).
+					CommandContext(ctx, stubCmd, "-trap", "-sleep", "3s", "It Works!")
 			},
 			wantStdout: []string{""},
 			wantStderr: []string{"signal received"},
@@ -77,8 +77,8 @@ func TestCommand(t *testing.T) {
 			test: "cancel",
 			cmd: func() *execx.Cmd {
 				ctx, cancel := context.WithCancel(context.Background())
-				go func() { time.Sleep(50 * time.Millisecond); cancel() }()
-				return execx.CommandContext(ctx, stubCmd, "-sleep", "1s", "It Works!")
+				go func() { time.Sleep(100 * time.Millisecond); cancel() }()
+				return execx.CommandContext(ctx, stubCmd, "-sleep", "3s", "It Works!")
 			},
 			wantStdout: []string{},
 			wantStderr: []string{},
@@ -88,8 +88,8 @@ func TestCommand(t *testing.T) {
 			test: "trap cancel",
 			cmd: func() *execx.Cmd {
 				ctx, cancel := context.WithCancel(context.Background())
-				go func() { time.Sleep(50 * time.Millisecond); cancel() }()
-				return execx.CommandContext(ctx, stubCmd, "-trap", "-sleep", "1s", "It Works!")
+				go func() { time.Sleep(100 * time.Millisecond); cancel() }()
+				return execx.CommandContext(ctx, stubCmd, "-trap", "-sleep", "3s", "It Works!")
 			},
 			wantStdout: []string{"It Works!"},
 			wantStderr: []string{"signal received"},
