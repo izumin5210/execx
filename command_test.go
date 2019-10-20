@@ -102,6 +102,9 @@ func TestCommand(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.test, func(t *testing.T) {
+			defer func(l execx.Logger) { execx.DefaultErrorLog = l }(execx.DefaultErrorLog)
+			execx.DefaultErrorLog = &testLogger{t: t}
+
 			if tc.skipOnWin && isWin {
 				t.Skip("skip on windows")
 			}
@@ -144,4 +147,13 @@ func TestCommand(t *testing.T) {
 			}
 		})
 	}
+}
+
+type testLogger struct {
+	t *testing.T
+}
+
+func (l *testLogger) Print(args ...interface{}) {
+	l.t.Helper()
+	l.t.Log(args...)
 }

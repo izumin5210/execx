@@ -69,14 +69,14 @@ func (c *Cmd) Wait() error {
 
 		case <-killCh:
 			killOnce.Do(func() {
-				_ = c.p.Kill()
-				_ = c.Process.Kill()
+				c.handleError(c.p.Kill())
+				c.handleError(c.Process.Kill())
 				killed = true
 			})
 
 		case <-c.ctx.Done():
 			termOnce.Do(func() {
-				c.p.Terminate()
+				c.handleError(c.p.Terminate())
 
 				go func() {
 					select {
@@ -104,4 +104,10 @@ func (c *Cmd) Output() ([]byte, error) {
 	c.Stdout = buf
 	err := c.Run()
 	return buf.Bytes(), err
+}
+
+func (c *Cmd) handleError(err error) {
+	if err != nil {
+		c.ErrorLog.Print(err)
+	}
 }

@@ -5,12 +5,18 @@ import (
 	"time"
 )
 
+var (
+	DefaultGracePeriod time.Duration = 30 * time.Second
+	DefaultErrorLog    Logger        = new(nopLogger)
+)
+
 type Option func(*Config)
 
 func defaultConfig() *Config {
 	return &Config{
-		GracePeriod:    30 * time.Second,
+		GracePeriod:    DefaultGracePeriod,
 		ProcessFactory: ProcessFactoryFunc(newOSProcess),
+		ErrorLog:       DefaultErrorLog,
 	}
 }
 
@@ -18,6 +24,8 @@ type Config struct {
 	GracePeriod time.Duration
 
 	ProcessFactory ProcessFactory
+
+	ErrorLog Logger
 }
 
 type ProcessFactory interface {
@@ -40,4 +48,8 @@ func WithGracePeriod(d time.Duration) Option {
 
 func WithProcessFactory(f ProcessFactory) Option {
 	return func(c *Config) { c.ProcessFactory = f }
+}
+
+func WithErrorLog(l Logger) Option {
+	return func(c *Config) { c.ErrorLog = l }
 }
