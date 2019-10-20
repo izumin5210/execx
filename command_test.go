@@ -5,6 +5,7 @@ import (
 	"context"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -18,6 +19,10 @@ var (
 )
 
 func init() {
+	// https://github.com/Songmu/timeout/blob/v0.4.0/timeout_test.go#L22-L32
+	if runtime.GOOS == "windows" {
+		stubCmd += ".exe"
+	}
 	err := exec.Command("go", "build", "-o", stubCmd, "./testdata/echo").Run()
 	if err != nil {
 		panic(err)
@@ -61,7 +66,7 @@ func TestCommand(t *testing.T) {
 			test: "over grace period",
 			cmd: func() *execx.Cmd {
 				ctx, _ := context.WithTimeout(context.Background(), 50*time.Millisecond)
-				return execx.New(execx.WithGracePeriod(100*time.Millisecond)).
+				return execx.New(execx.WithGracePeriod(200*time.Millisecond)).
 					CommandContext(ctx, stubCmd, "-trap", "-sleep", "1s", "It Works!")
 			},
 			wantStdout: []string{""},

@@ -73,16 +73,16 @@ func (c *Cmd) Wait() error {
 		case <-c.ctx.Done():
 			termOnce.Do(func() {
 				c.p.Terminate()
-			})
 
-			go func() {
-				select {
-				case <-done:
-					return
-				case <-time.After(c.GracePeriod):
-					killCh <- struct{}{}
-				}
-			}()
+				go func() {
+					select {
+					case <-done:
+						return
+					case <-time.After(c.GracePeriod):
+						killCh <- struct{}{}
+					}
+				}()
+			})
 		}
 	}
 }
