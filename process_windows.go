@@ -8,7 +8,7 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-func newOSProcess(cmd *exec.Cmd) Process {
+func NewOSProcess(cmd *exec.Cmd) Process {
 	// https://github.com/Songmu/timeout/blob/v0.4.0/timeout_windows.go#L9-L16
 	if cmd.SysProcAttr == nil {
 		cmd.SysProcAttr = &syscall.SysProcAttr{

@@ -15,6 +15,8 @@ type Process interface {
 	Signal() os.Signal
 }
 
+type NewProcessFunc func(*exec.Cmd) Process
+
 type process struct {
 	cmd *exec.Cmd
 	ex  ExitStatus

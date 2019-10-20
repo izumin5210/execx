@@ -31,7 +31,7 @@ func (c *Cmd) Run() error {
 }
 
 func (c *Cmd) Start() error {
-	c.p = c.ProcessFactory.Create(c.Cmd)
+	c.p = c.NewProcessFunc(c.Cmd)
 	if err := c.p.Start(); err != nil {
 		return &ExitStatus{
 			Code: wrapcommander.ResolveExitCode(err),
