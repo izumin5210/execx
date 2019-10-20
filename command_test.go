@@ -15,11 +15,12 @@ import (
 
 var (
 	stubCmd = filepath.Join(".", "testdata", "echo", "bin", "echo")
+	isWin   = runtime.GOOS == "windows"
 )
 
 func init() {
 	// https://github.com/Songmu/timeout/blob/v0.4.0/timeout_test.go#L22-L32
-	if runtime.GOOS == "windows" {
+	if isWin {
 		stubCmd += ".exe"
 	}
 	err := exec.Command("go", "build", "-o", stubCmd, "./testdata/echo").Run()
@@ -112,8 +113,12 @@ func TestCommand(t *testing.T) {
 					t.Errorf("Run() returned unknown error: %v", err)
 				case tc.wantStatus != nil:
 					if gotStatus, ok := err.(*execx.ExitStatus); ok {
-						if got, want := gotStatus.Signaled, tc.wantStatus.Signaled; got != want {
-							t.Errorf("(*ExitStatus).Signaled got %t, want %t", got, want)
+						if isWin {
+							t.Log("(*execx.ExitStatus).Signaled does not work on windows")
+						} else {
+							if got, want := gotStatus.Signaled, tc.wantStatus.Signaled; got != want {
+								t.Errorf("(*ExitStatus).Signaled got %t, want %t", got, want)
+							}
 						}
 						if got, want := gotStatus.Killed, tc.wantStatus.Killed; got != want {
 							t.Errorf("(*ExitStatus).Killed got %t, want %t", got, want)
