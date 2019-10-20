@@ -1,4 +1,5 @@
 # execx
+[![CI](https://github.com/izumin5210/execx/workflows/CI/badge.svg)](https://github.com/izumin5210/execx/actions?workflow=CI)
 [![GoDoc](https://godoc.org/github.com/izumin5210/execx?status.svg)](https://godoc.org/github.com/izumin5210/execx)
 [![License](https://img.shields.io/github/license/izumin5210/execx)](./LICENSE)
 
