@@ -1,6 +1,7 @@
 package execx
 
 import (
+	"os"
 	"os/exec"
 
 	"github.com/Songmu/wrapcommander"
@@ -11,6 +12,7 @@ type Process interface {
 	Wait() <-chan *ExitStatus
 	Terminate() error
 	Kill() error
+	Signal() os.Signal
 }
 
 type process struct {

@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"os/exec"
+	"sync"
 	"time"
 
 	"github.com/Songmu/wrapcommander"
@@ -52,6 +53,7 @@ func (c *Cmd) Wait() error {
 	defer close(done)
 
 	exitCh := c.p.Wait()
+	var killOnce, termOnce sync.Once
 
 	for {
 		select {
@@ -64,10 +66,14 @@ func (c *Cmd) Wait() error {
 			return nil
 
 		case <-killCh:
-			c.p.Kill()
+			killOnce.Do(func() {
+				c.p.Kill()
+			})
 
 		case <-c.ctx.Done():
-			c.p.Terminate()
+			termOnce.Do(func() {
+				c.p.Terminate()
+			})
 
 			go func() {
 				select {

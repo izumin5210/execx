@@ -2,6 +2,7 @@ package testingexecx
 
 import (
 	"context"
+	"os"
 	"os/exec"
 
 	"github.com/izumin5210/execx"
@@ -76,3 +77,5 @@ func (p *FakeProcess) Kill() error {
 	p.cancel()
 	return nil
 }
+
+func (p *FakeProcess) Signal() os.Signal { return os.Interrupt }

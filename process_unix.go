@@ -20,7 +20,7 @@ func newOSProcess(cmd *exec.Cmd) Process {
 
 func (p *process) Terminate() error {
 	// https://github.com/Songmu/timeout/blob/v0.4.0/timeout_unix.go#L21-L35
-	sig := os.Interrupt
+	sig := p.Signal()
 	syssig, ok := sig.(syscall.Signal)
 	if !ok {
 		return p.cmd.Process.Signal(sig)
@@ -42,3 +42,5 @@ func (p *process) Kill() error {
 	_ = p.cmd.Process.Kill()
 	return nil
 }
+
+func (p *process) Signal() os.Signal { return syscall.SIGTERM }

@@ -19,5 +19,5 @@ func ExampleCommandTimeout() {
 
 	fmt.Println(out, err, st.Signaled, st.Killed)
 
-	// Output: [] signal: interrupt true false
+	// Output: [] signal: terminated true false
 }
