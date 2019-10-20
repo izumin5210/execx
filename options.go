@@ -1,6 +1,8 @@
 package execx
 
 import (
+	"context"
+	"os/exec"
 	"time"
 )
 
@@ -40,6 +42,10 @@ func WithGracePeriod(d time.Duration) Option {
 
 func WithNewProcessFunc(f NewProcessFunc) Option {
 	return func(c *Config) { c.NewProcessFunc = f }
+}
+
+func WithFakeProcess(f func(context.Context, *exec.Cmd) error) Option {
+	return WithNewProcessFunc(NewFakeNewProcessFunc(f))
 }
 
 func WithErrorLog(l Logger) Option {
