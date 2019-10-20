@@ -1,5 +1,3 @@
-// +build !windows
-
 package execx_test
 
 import (
@@ -10,7 +8,7 @@ import (
 	"github.com/izumin5210/execx"
 )
 
-func ExampleCommandContext() {
+func ExampleCommandTimeout() {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
