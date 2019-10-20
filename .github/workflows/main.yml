@@ -4,15 +4,18 @@ on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ '1.12', '1.13beta1' ]
-    name: test with go${{ matrix.go }}
+        go: [ '1.12', '1.13' ]
+        vm: [ 'ubuntu-latest', 'windows-latest', 'macOS-latest' ]
+      fail-fast: false
+
+    runs-on: ${{ matrix.vm }}
+
     steps:
       - uses: actions/checkout@master
       - name: Setup go
         uses: actions/setup-go@v1
         with:
           go-version: ${{ matrix.go }}
-      - run: go test -v ./...
+      - run: go test -race -v ./...

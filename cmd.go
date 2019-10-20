@@ -54,11 +54,13 @@ func (c *Cmd) Wait() error {
 
 	exitCh := c.p.Wait()
 	var killOnce, termOnce sync.Once
+	var killed bool
 
 	for {
 		select {
 		case ex, ok := <-exitCh:
 			if ok {
+				ex.Killed = killed
 				ex.Timeout = c.ctx.Err() == context.DeadlineExceeded
 				ex.Canceled = c.ctx.Err() == context.Canceled
 				return ex
@@ -67,22 +69,23 @@ func (c *Cmd) Wait() error {
 
 		case <-killCh:
 			killOnce.Do(func() {
-				c.p.Kill()
+				c.handleError(c.p.Kill())
+				killed = true
 			})
 
 		case <-c.ctx.Done():
 			termOnce.Do(func() {
-				c.p.Terminate()
-			})
+				c.handleError(c.p.Terminate())
 
-			go func() {
-				select {
-				case <-done:
-					return
-				case <-time.After(c.GracePeriod):
-					killCh <- struct{}{}
-				}
-			}()
+				go func() {
+					select {
+					case <-done:
+						return
+					case <-time.After(c.GracePeriod):
+						killCh <- struct{}{}
+					}
+				}()
+			})
 		}
 	}
 }
@@ -100,4 +103,10 @@ func (c *Cmd) Output() ([]byte, error) {
 	c.Stdout = buf
 	err := c.Run()
 	return buf.Bytes(), err
+}
+
+func (c *Cmd) handleError(err error) {
+	if err != nil {
+		c.ErrorLog.Print(err)
+	}
 }
